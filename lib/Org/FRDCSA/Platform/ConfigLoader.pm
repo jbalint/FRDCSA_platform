@@ -22,7 +22,7 @@ has 'searchPaths' => (
 
 has 'logger' => (
 		 is => 'ro',
-		 default => sub { Org::FRDCSA::Platform::Log->getLogger("Org::FRDCSA::Platform::ConfigLoader"); },
+		 default => sub { Org::FRDCSA::Platform::Log->getLogger('Org::FRDCSA::Platform::ConfigLoader'); },
 );
 
 =pod

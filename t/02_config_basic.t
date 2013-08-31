@@ -1,4 +1,6 @@
 # simple API test for Org::FRDCSA::Platform::ConfigLoader
+use strict;
+use warnings;
 use Test::More;
 
 require_ok("Org::FRDCSA::Platform::ConfigLoader");

@@ -10,21 +10,24 @@ use MooseX::ClassAttribute;
 use Log::Log4perl qw(:easy);
 
 class_has 'logger' => (
-			  is => 'ro',
-			  default => sub { get_logger('Org::FRDCSA::Platform::Log'); },
-			 );
+    is      => 'ro',
+    default => sub { get_logger('Org::FRDCSA::Platform::Log'); },
+);
 
 Log::Log4perl->easy_init($DEBUG);
 
 sub getLogger {
-  my $loggerName = shift;
-  if (not $loggerName) {
-    my ($callingPackage) = caller();
-    Org::FRDCSA::Platform::Log->logger->debug(sprintf('Module name not provided. Defaulting to caller %s', $callingPackage));
-    $loggerName = $callingPackage;
-  }
+    my $loggerName = shift;
+    if ( not $loggerName ) {
+        my ($callingPackage) = caller();
+        Org::FRDCSA::Platform::Log->logger->debug(
+            sprintf( 'Module name not provided. Defaulting to caller %s',
+                $callingPackage )
+        );
+        $loggerName = $callingPackage;
+    }
 
-  return get_logger($loggerName);
+    return get_logger($loggerName);
 }
 
 1;

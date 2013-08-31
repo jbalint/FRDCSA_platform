@@ -6,22 +6,27 @@ use Test::More;
 
 require_ok('Org::FRDCSA::Platform::SQLDatabase');
 
-my $db = Org::FRDCSA::Platform::SQLDatabase->new({configPath => 't'});
+my $db = Org::FRDCSA::Platform::SQLDatabase->new( { configPath => 't' } );
 $db->connect('test');
 
 # create a simple table for testing
 $db->executeUpdate('drop table if exists sqldb_test1');
-$db->executeUpdate('create table sqldb_test1(x int, y varchar(10), primary key (x))');
+$db->executeUpdate(
+    'create table sqldb_test1(x int, y varchar(10), primary key (x))');
 
 # insert some data
 my $yValue = 'why oh why';
-my $newKey = $db->executeInsert('insert into sqldb_test1 (y) values (?)', [$yValue]);
+my $newKey =
+  $db->executeInsert( 'insert into sqldb_test1 (y) values (?)', [$yValue] );
+
 # check the new key value
-is(0, $newKey);
+is( 0, $newKey );
+
 # make sure we can find it by key
-my $row = $db->findRecordById('sqldb_test1', 'x', $newKey);
-is($newKey, $row->{x});
-is($yValue, $row->{y});
+my $row = $db->findRecordById( 'sqldb_test1', 'x', $newKey );
+is( $newKey, $row->{x} );
+is( $yValue, $row->{y} );
+
 # clean up
 $db->executeUpdate('drop table sqldb_test1');
 
@@ -32,7 +37,7 @@ $db->connect('test');
 $db->connect('test');
 $db->connect('test');
 $db->connect('test');
-is('test', $db->currentDatabaseName);
+is( 'test', $db->currentDatabaseName );
 $db->disconnect();
 
 # TODO error testing

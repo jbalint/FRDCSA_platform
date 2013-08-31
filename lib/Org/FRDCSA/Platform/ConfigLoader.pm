@@ -1,6 +1,8 @@
 use strict;
 use warnings;
+
 package Org::FRDCSA::Platform::ConfigLoader;
+
 # ABSTRACT: Access to configuration data.
 
 use Config::Any;
@@ -16,13 +18,16 @@ B<searchPaths> Array ref of paths to search for config files. Default values are
 =cut
 
 has 'searchPaths' => (
-		      is => 'rw',
-		      default => sub { ['~/.frdcsa', '/etc/frdcsa'] },
+    is      => 'rw',
+    default => sub { [ '~/.frdcsa', '/etc/frdcsa' ] },
 );
 
 has 'logger' => (
-		 is => 'ro',
-		 default => sub { Org::FRDCSA::Platform::Log->getLogger('Org::FRDCSA::Platform::ConfigLoader'); },
+    is      => 'ro',
+    default => sub {
+        Org::FRDCSA::Platform::Log->getLogger(
+            'Org::FRDCSA::Platform::ConfigLoader');
+    },
 );
 
 =pod
@@ -45,6 +50,7 @@ TODO document file locations and search paths
 =cut
 
 ################################
+
 =pod
 
 =method B<getConfig(moduleName)>
@@ -58,29 +64,37 @@ and empty object.
 =cut
 
 sub getConfig {
-  my ($self, $moduleName) = @_;
-  if (not $moduleName) {
-    my ($callingPackage) = caller();
-    if ($callingPackage ne "main") {
-      $self->logger->warn(sprintf('Module name not provided. Defaulting to caller %s', $callingPackage));
-      $moduleName = $callingPackage;
+    my ( $self, $moduleName ) = @_;
+    if ( not $moduleName ) {
+        my ($callingPackage) = caller();
+        if ( $callingPackage ne "main" ) {
+            $self->logger->warn(
+                sprintf( 'Module name not provided. Defaulting to caller %s',
+                    $callingPackage )
+            );
+            $moduleName = $callingPackage;
+        }
     }
-  }
-  # check for file
-  my $filename = $moduleName;
-  $filename =~ s/::/_/g;
-  $filename .= '.conf';
-  # in order of priority
-  my @possibleFilenames = map { $_ . '/' . $filename } @{$self->searchPaths};
-  for my $f (@possibleFilenames) {
-    next unless (-r $f);
-    my $c = Config::Any->load_files({ files => [$f] });
-    next unless $c;
-    # we found a usable file, return it's config
-    $self->logger->debug(sprintf("Loaded %s config from %s", $moduleName, $f));
-    return $c->[0]->{$f};
-  }
-  return {};
+
+    # check for file
+    my $filename = $moduleName;
+    $filename =~ s/::/_/g;
+    $filename .= '.conf';
+
+    # in order of priority
+    my @possibleFilenames =
+      map { $_ . '/' . $filename } @{ $self->searchPaths };
+    for my $f (@possibleFilenames) {
+        next unless ( -r $f );
+        my $c = Config::Any->load_files( { files => [$f] } );
+        next unless $c;
+
+        # we found a usable file, return it's config
+        $self->logger->debug(
+            sprintf( "Loaded %s config from %s", $moduleName, $f ) );
+        return $c->[0]->{$f};
+    }
+    return {};
 }
 
 1;

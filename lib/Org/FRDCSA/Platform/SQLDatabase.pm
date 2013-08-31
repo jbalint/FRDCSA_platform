@@ -1,6 +1,8 @@
 use strict;
 use warnings;
+
 package Org::FRDCSA::Platform::SQLDatabase;
+
 # ABSTRACT: sql database access
 
 use Error;
@@ -19,13 +21,13 @@ B<config> Configuration.
 
 =cut
 
-has 'dbh' => ( is => 'ro', );
+has 'dbh'        => ( is => 'ro', );
 has 'configPath' => ( is => 'ro', );
-has 'config' => (
-		 is => 'ro',
-		 lazy => 1,
-		 builder => '_build_config',
-		);
+has 'config'     => (
+    is      => 'ro',
+    lazy    => 1,
+    builder => '_build_config',
+);
 
 =pod
 
@@ -36,12 +38,12 @@ Read config file.
 =cut
 
 sub _build_config {
-  my $self = shift;
-  my $configLoader = Org::FRDCSA::Platform::ConfigLoader->new;
-  if ($self->configPath) {
-    $configLoader->searchPaths([$self->configPath]);
-  }
-  return $configLoader->getConfig;
+    my $self         = shift;
+    my $configLoader = Org::FRDCSA::Platform::ConfigLoader->new;
+    if ( $self->configPath ) {
+        $configLoader->searchPaths( [ $self->configPath ] );
+    }
+    return $configLoader->getConfig;
 }
 
 =pod
@@ -55,7 +57,8 @@ Throws: ... if connection fails
 =cut
 
 sub connect {
-  # TODO
+
+    # TODO
 }
 
 =pod
@@ -67,9 +70,10 @@ Internal intialization.
 =cut
 
 sub BUILD {
-  my $self = shift;
-  # cause config init
-  $self->config;
+    my $self = shift;
+
+    # cause config init
+    $self->config;
 }
 
 =pod
@@ -85,15 +89,21 @@ Throws: C<Error::Simple> if the requested record is not found.
 =cut
 
 sub findRecordById {
-  my ($self, $tableName, $columnName, $keyValue) = @_;
-  # note, this only works with client-side prepare
-  my $stmt = $self->dbh->prepare("select * from ? where ? = ?");
-  $stmt->execute($keyValue);
-  my $rows = $stmt->fetchall_hashref($columnName);
-  if ($rows->{keyValue}) {
-    return $rows->{keyValue};
-  }
-  throw Error::Simple(sprintf("no record found in %s table where %s=%s", $tableName, $columnName, $keyValue));
+    my ( $self, $tableName, $columnName, $keyValue ) = @_;
+
+    # note, this only works with client-side prepare
+    my $stmt = $self->dbh->prepare("select * from ? where ? = ?");
+    $stmt->execute($keyValue);
+    my $rows = $stmt->fetchall_hashref($columnName);
+    if ( $rows->{keyValue} ) {
+        return $rows->{keyValue};
+    }
+    throw Error::Simple(
+        sprintf(
+            "no record found in %s table where %s=%s",
+            $tableName, $columnName, $keyValue
+        )
+    );
 }
 
 =pod
@@ -107,9 +117,9 @@ Returns: The result set.
 =cut
 
 sub executeQuery {
-  my ($self, $query, $argArray, $args) = @_;
-  my $stmt = $self->dbh->prepare("$query");
-  $stmt->execute()
+    my ( $self, $query, $argArray, $args ) = @_;
+    my $stmt = $self->dbh->prepare("$query");
+    $stmt->execute();
 }
 
 =pod
@@ -123,10 +133,10 @@ Returns: The ID of the inserted record.
 =cut
 
 sub executeInsert {
-  my ($self, $query, $argArray) = @_;
-  my $stmt = $self->dbh->prepare($query);
-  $stmt->execute(@$argArray);
-  return $self->last_insert_id;
+    my ( $self, $query, $argArray ) = @_;
+    my $stmt = $self->dbh->prepare($query);
+    $stmt->execute(@$argArray);
+    return $self->last_insert_id;
 }
 
 =pod
@@ -140,9 +150,9 @@ Returns: nothing.
 =cut
 
 sub executeUpdate {
-  my ($self, $query, $argArray) = @_;
-  my $stmt = $self->dbh->prepare($query);
-  $stmt->execute(@$argArray);
+    my ( $self, $query, $argArray ) = @_;
+    my $stmt = $self->dbh->prepare($query);
+    $stmt->execute(@$argArray);
 }
 
 1;

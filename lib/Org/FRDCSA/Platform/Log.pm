@@ -17,6 +17,17 @@ class_has 'logger' => (
 
 Log::Log4perl->easy_init($DEBUG);
 
+=pod
+
+=method getLogger(moduleName)
+
+Create a logger for the specified (optional) C<moduleName>. If C<moduleName> is not provided,
+the package name as determined by C<caller()> will be used.
+
+Returns: A logger object.
+
+=cut
+
 sub getLogger {
     my $loggerName = shift;
     if ( not $loggerName ) {

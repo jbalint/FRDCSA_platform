@@ -24,10 +24,7 @@ has 'searchPaths' => (
 
 has 'logger' => (
     is      => 'ro',
-    default => sub {
-        Org::FRDCSA::Platform::Log->getLogger(
-            'Org::FRDCSA::Platform::ConfigLoader');
-    },
+    default => sub { Org::FRDCSA::Platform::Log->getLogger(); },
 );
 
 =pod
@@ -68,7 +65,7 @@ sub getConfig {
     if ( not $moduleName ) {
         my ($callingPackage) = caller();
         if ( $callingPackage ne "main" ) {
-            $self->logger->warn(
+            $self->logger->debug(
                 sprintf( 'Module name not provided. Defaulting to caller %s',
                     $callingPackage )
             );

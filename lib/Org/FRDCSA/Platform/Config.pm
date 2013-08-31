@@ -3,7 +3,13 @@ use warnings;
 package Org::FRDCSA::Platform::Config;
 # ABSTRACT: Access to configuration data.
 
+use Config::Any;
 use Moose;
+
+has 'searchPaths' => (
+		      is => 'rw',
+		      default => sub { ["~/.frdcsa", "/etc/frdcsa"] },
+);
 
 =pod
 
@@ -29,14 +35,30 @@ TODO document file locations and search paths
 
 =method B<getConfig(moduleName)>
 
-Get a configuration for the given module name. 
+Get a configuration for the given module name.
 
-Returns: A configuration object, if one is available.
+Returns: A configuration object, if one is available. Otherwise,
+and empty object.
 
 =cut
 
 sub getConfig {
+  my ($self, $moduleName) = @_;
+  # check for file
+  my $filename = $moduleName;
+  $filename =~ s/::/_/g;
+  $filename .= ".conf";
+  # in order of priority
+  my @possibleFilenames = map { $_ . "/" . $filename } @{$self->searchPaths};
+  for my $f (@possibleFilenames) {
+    next unless (-r $f);
+    my $c = Config::Any->load_files({ files => [$f] });
+    next unless $c;
+    # we found a usable file, return it's config
+    return $c->[0]->{$f};
+  }
   return {};
 }
 
 1;
+

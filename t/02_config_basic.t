@@ -2,7 +2,7 @@
 use Test::More;
 
 require_ok("Org::FRDCSA::Platform::Config");
-my $config = Org::FRDCSA::Platform::Config->getConfig("my_app");
+my $config = Org::FRDCSA::Platform::Config->new->getConfig("my_app");
 print $config->{someConfigurationVar} || "";
 
 done_testing();

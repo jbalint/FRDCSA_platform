@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 package Org::FRDCSA::Platform::Config;
 # ABSTRACT: config
 
@@ -14,3 +16,5 @@ blah blah
 sub getConfig {
 
 }
+
+1;

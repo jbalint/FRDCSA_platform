@@ -5,6 +5,7 @@ package Org::FRDCSA::Platform::ConfigLoader;
 
 use Config::Any;
 use Moose;
+use Org::FRDCSA::Platform::Log;
 
 =pod
 
@@ -17,6 +18,11 @@ B<searchPaths> Array ref of paths to search for config files. Default values are
 has 'searchPaths' => (
 		      is => 'rw',
 		      default => sub { ['~/.frdcsa', '/etc/frdcsa'] },
+);
+
+has 'logger' => (
+		 is => 'ro',
+		 default => sub { Org::FRDCSA::Platform::Log->getLogger("Org::FRDCSA::Platform::ConfigLoader"); },
 );
 
 =pod
@@ -63,6 +69,7 @@ sub getConfig {
     my $c = Config::Any->load_files({ files => [$f] });
     next unless $c;
     # we found a usable file, return it's config
+    $self->logger->debug(sprintf("Loaded %s config from %s", $moduleName, $f));
     return $c->[0]->{$f};
   }
   return {};

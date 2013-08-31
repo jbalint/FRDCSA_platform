@@ -5,9 +5,9 @@ require_ok('Org::FRDCSA::Platform::Log');
 
 my $log = Org::FRDCSA::Platform::Log->getLogger("02_log_basic");
 
-$log->debug("debug");
-$log->info("info");
-$log->warn("warn");
-$log->error("error");
-$log->fatal("fatal");
+$log->debug("THIS IS A TEST MESSAGE AT (debug) LEVEL");
+$log->info("THIS IS A TEST MESSAGE AT (info) LEVEL");
+$log->warn("THIS IS A TEST MESSAGE AT (warn) LEVEL");
+$log->error("THIS IS A TEST MESSAGE AT (error) LEVEL");
+$log->debug("THIS IS A TEST MESSAGE AT (debug) LEVEL");
 

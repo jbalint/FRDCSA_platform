@@ -7,6 +7,18 @@ use Error;
 use Moose;
 use Org::FRDCSA::Platform::ConfigLoader;
 
+=pod
+
+=head1 ATTRIBUTES
+
+B<dbh> DBI database handle.
+
+B<configPath> Optional path to configuration file, must be provided to constructor.
+
+B<config> Configuration.
+
+=cut
+
 has 'dbh' => ( is => 'ro', );
 has 'configPath' => ( is => 'ro', );
 has 'config' => (
@@ -132,7 +144,5 @@ sub executeUpdate {
   my $stmt = $self->dbh->prepare($query);
   $stmt->execute(@$argArray);
 }
-
-
 
 1;

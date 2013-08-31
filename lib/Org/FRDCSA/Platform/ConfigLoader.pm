@@ -49,7 +49,8 @@ TODO document file locations and search paths
 
 =method B<getConfig(moduleName)>
 
-Get a configuration for the given module name.
+Get a configuration for the given module name. If module name is not specified,
+the package of the caller will be used to search for a configuration instance.
 
 Returns: A configuration object, if one is available. Otherwise,
 and empty object.
@@ -58,6 +59,13 @@ and empty object.
 
 sub getConfig {
   my ($self, $moduleName) = @_;
+  if (not $moduleName) {
+    my ($callingPackage) = caller();
+    if ($callingPackage ne "main") {
+      $self->logger->warn(sprintf('Module name not provided. Defaulting to caller %s', $callingPackage));
+      $moduleName = $callingPackage;
+    }
+  }
   # check for file
   my $filename = $moduleName;
   $filename =~ s/::/_/g;

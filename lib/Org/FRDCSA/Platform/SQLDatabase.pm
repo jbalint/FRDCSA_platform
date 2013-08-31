@@ -4,13 +4,33 @@ package Org::FRDCSA::Platform::SQLDatabase;
 # ABSTRACT: sql database access
 
 use Error;
-use Org::FRDCSA::Platform::Config;
+use Moose;
+use Org::FRDCSA::Platform::ConfigLoader;
 
-my $config = Org::FRDCSA::Platform::Config->getConfig('Org::FRDCSA::Platform::SQLDatabase');
+has 'dbh' => ( is => 'ro', );
+has 'configPath' => ( is => 'ro', );
+has 'config' => (
+		 is => 'ro',
+		 lazy => 1,
+		 builder => '_build_config',
+		);
 
-has 'dbh' => (
-	      is => 'ro'
-);
+=pod
+
+=method B<_build_config>
+
+Read config file.
+
+=cut
+
+sub _build_config {
+  my $self = shift;
+  my $configLoader = Org::FRDCSA::Platform::ConfigLoader->new;
+  if ($self->configPath) {
+    $configLoader->searchPaths([$self->configPath]);
+  }
+  return $configLoader->getConfig;
+}
 
 =pod
 
@@ -23,6 +43,21 @@ Throws: ... if connection fails
 =cut
 
 sub connect {
+  # TODO
+}
+
+=pod
+
+=method B<BUILD()> (constructor)
+
+Internal intialization.
+
+=cut
+
+sub BUILD {
+  my $self = shift;
+  # cause config init
+  $self->config;
 }
 
 =pod
@@ -48,5 +83,56 @@ sub findRecordById {
   }
   throw Error::Simple(sprintf("no record found in %s table where %s=%s", $tableName, $columnName, $keyValue));
 }
+
+=pod
+
+=method B<executeQuery>
+
+Execute a query.
+
+Returns: The result set.
+
+=cut
+
+sub executeQuery {
+  my ($self, $query, $argArray, $args) = @_;
+  my $stmt = $self->dbh->prepare("$query");
+  $stmt->execute()
+}
+
+=pod
+
+=method B<executeInsert>
+
+Insert a single record.
+
+Returns: The ID of the inserted record.
+
+=cut
+
+sub executeInsert {
+  my ($self, $query, $argArray) = @_;
+  my $stmt = $self->dbh->prepare($query);
+  $stmt->execute(@$argArray);
+  return $self->last_insert_id;
+}
+
+=pod
+
+=method B<executeUpdate(query, argArrayRef)>
+
+Execute an update DML or DDL statement.
+
+Returns: nothing.
+
+=cut
+
+sub executeUpdate {
+  my ($self, $query, $argArray) = @_;
+  my $stmt = $self->dbh->prepare($query);
+  $stmt->execute(@$argArray);
+}
+
+
 
 1;

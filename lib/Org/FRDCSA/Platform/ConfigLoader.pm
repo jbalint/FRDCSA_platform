@@ -7,6 +7,8 @@ package Org::FRDCSA::Platform::ConfigLoader;
 
 use Config::Any;
 use Moose;
+use namespace::autoclean;
+
 use Org::FRDCSA::Platform::Log;
 
 =pod
@@ -94,5 +96,5 @@ sub getConfig {
     return {};
 }
 
+__PACKAGE__->meta->make_immutable;
 1;
-

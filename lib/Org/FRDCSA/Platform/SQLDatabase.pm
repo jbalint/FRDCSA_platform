@@ -8,6 +8,8 @@ package Org::FRDCSA::Platform::SQLDatabase;
 use DBI;
 use Error;
 use Moose;
+use namespace::autoclean;
+
 use Org::FRDCSA::Platform::ConfigLoader;
 
 =pod
@@ -261,4 +263,5 @@ sub executeUpdate {
     $stmt->execute(@$argArray);
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

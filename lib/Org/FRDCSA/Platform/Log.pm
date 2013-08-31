@@ -8,6 +8,7 @@ package Org::FRDCSA::Platform::Log;
 use Moose;
 use MooseX::ClassAttribute;
 use Log::Log4perl qw(:easy);
+use namespace::autoclean;
 
 class_has 'logger' => (
     is      => 'ro',
@@ -30,4 +31,5 @@ sub getLogger {
     return get_logger($loggerName);
 }
 
+__PACKAGE__->meta->make_immutable;
 1;

@@ -1,30 +1,38 @@
 use strict;
 use warnings;
-package Org::FRDCSA::Platform::Config;
+package Org::FRDCSA::Platform::ConfigLoader;
 # ABSTRACT: Access to configuration data.
 
 use Config::Any;
 use Moose;
 
+=pod
+
+=head1 ATTRIBUTES
+
+B<searchPaths> Array ref of paths to search for config files. Default values are ~/.frdcsa, /etc/frdcsa.
+
+=cut
+
 has 'searchPaths' => (
 		      is => 'rw',
-		      default => sub { ["~/.frdcsa", "/etc/frdcsa"] },
+		      default => sub { ['~/.frdcsa', '/etc/frdcsa'] },
 );
 
 =pod
 
 =head1 SYNOPSIS
 
-    use Org::FRDCSA::Platform::Config;
-    my $config = Org::FRDCSA::Platform::Config->getConfig("my_app");
+    use Org::FRDCSA::Platform::ConfigLoader;
+    my $config = Org::FRDCSA::Platform::ConfigLoader->getConfig('my_app');
     print $config->{someConfigurationVar};
 
 =head1 DESCRIPTION
 
 Configuration data resides on the file system and is accessed by
-modules and applications. By using Org::FRDCSA::Platform::Config,
+modules and applications. By using Org::FRDCSA::Platform::ConfigLoader,
 the need to manually find and parse configuration files is bypassed
-and the responsibility is passed to Org::FRDCSA::Platform::Config.
+and the responsibility is passed to Org::FRDCSA::Platform::ConfigLoader.
 
 TODO document file locations and search paths
 
@@ -47,9 +55,9 @@ sub getConfig {
   # check for file
   my $filename = $moduleName;
   $filename =~ s/::/_/g;
-  $filename .= ".conf";
+  $filename .= '.conf';
   # in order of priority
-  my @possibleFilenames = map { $_ . "/" . $filename } @{$self->searchPaths};
+  my @possibleFilenames = map { $_ . '/' . $filename } @{$self->searchPaths};
   for my $f (@possibleFilenames) {
     next unless (-r $f);
     my $c = Config::Any->load_files({ files => [$f] });
